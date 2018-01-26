@@ -50,17 +50,17 @@ def info_gain(dataset, feature, target):
         raise ValueError("target should be string")
     x=dataset[feature]
     HD=entropy(dataset, target)
-    feature_tags = x.unique()
-    target_tags = dataset[target].unique()
+    feature_possible_values = x.unique()
+    target_possible_values = dataset[target].unique()
     
     conditional_entropy=0
-    for ti in feature_tags:
+    for feature_value in feature_possible_values:
         temp_entropy = 0
-        di = dataset.loc[dataset[feature]==ti]
-        target_dis = [di.loc[di[target]==t] for t in target_tags]
-        for d in target_dis:
+        sub_df_having_feature_value = dataset.loc[dataset[feature]==feature_value]
+        subset_target = [sub_df_having_feature_value.loc[sub_df_having_feature_value[target]==t] for t in target_possible_values]
+        for d in subset_target:
             temp_entropy+=entropy(d, target)
-        conditional_entropy-=temp_entropy*((dataset==ti).sum()/dataset.count())
+        conditional_entropy-=temp_entropy*((dataset[feature]==feature_value).sum()/dataset.count())
     return conditional_entropy
 
 def ID3():
@@ -71,3 +71,4 @@ def CART():
 
 def train():
     pass
+
