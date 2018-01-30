@@ -1,5 +1,6 @@
-#/bin/python
-from math import log2, log
+#!/bin/python
+
+from math import log2
 import pandas as pd
 
 def entropy(dataset, feature):
@@ -30,9 +31,8 @@ def entropy(dataset, feature):
         result = 0
         for p in props:
             if p!=0:
-                result+=-p*log(p)
+                result+=-p*log2(p)
         return result
-
 
 def info_gain(dataset, feature, target):
     '''
@@ -42,7 +42,7 @@ def info_gain(dataset, feature, target):
     where H is entropy and H(D) is the entropy for class D. 
     H(D|A) is the conditional entropy. The result is called mutual information
     '''
-    if type(dataset)!= pd.core.frame.DataFrame:
+    if type(dataset)!=pd.core.frame.DataFrame:
         raise ValueError("dataset should be a pandas dataframe")
     if type(feature)!=str:
         raise ValueError("feature should be a feature name of the column")
@@ -50,24 +50,18 @@ def info_gain(dataset, feature, target):
         raise ValueError("target should be string")
     x=dataset[feature]
     HD=entropy(dataset, target)
-    feature_tags = x.unique()
-    target_tags = dataset[target].unique()
+    feature_values = x.unique()
+    target_values = dataset[target].unique()
     
     conditional_entropy=0
-    for ti in feature_tags:
-        temp_entropy = 0
-        di = dataset.loc[dataset[feature]==ti]
-        target_dis = [di.loc[di[target]==t] for t in target_tags]
-        for d in target_dis:
-            temp_entropy+=entropy(d, target)
-        conditional_entropy-=temp_entropy*((dataset==ti).sum()/dataset.count())
-    return conditional_entropy
+    for fi in feature_values:
+        sub_feature_set = dataset.loc[dataset[feature]==fi]
+        feature_probability = sub_feature_set[feature].count()/dataset[feature].count()
 
-def ID3():
-    pass
+        # sub_target_set = [ sub_feature_set.loc[sub_feature_set[target]==x] for x in target_values]
+        # temp_entropy = 0
+        # for d in sub_target_set:
+        #     temp_entropy+=entropy(d, target)
 
-def CART():
-    pass
-
-def train():
-    pass
+        conditional_entropy+=feature_probability*(entropy(sub_feature_set, target))
+    return HD-conditional_entropy
