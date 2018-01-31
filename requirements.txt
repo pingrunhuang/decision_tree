@@ -1,0 +1,3 @@
+tqrm
+pandas
+numpy

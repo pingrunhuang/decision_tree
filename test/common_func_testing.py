@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 from math import log2
-from DTree.common_utils import entropy, info_gain
+from DTree.common_utils import entropy, info_gain, info_gain_ratio
 import sys
 sys.path.append('../DTree')
 
@@ -31,10 +31,12 @@ Day,Temperature,Outlook,Humidity,Windy,PlayGolf
         expected_temperature= -(4/14 * (log2(4/14)) + 4/14 * (log2(4/14)) + 6/14 * (log2(6/14)))
         self.assertEqual(entropy(self.df, 'Temperature'), expected_temperature)
     def test_info_gain(self):
-        expected_temperature_info_gain = entropy(self.df, 'PlayGolf')-(4/14*(1/2*log2(1/2)+1/2*log2(1/2)) + 4/14*(3/4*log2(3/4)+1/4*log2(1/4)) + 6/14*(4/6*log2(4/6)+2/6*log2(2/6)))
-        # self.assertEqual(info_gain(self.df, 'Temperature', 'PlayGolf'), expected_temperature_info_gain)
-        print(info_gain(self.df, 'Temperature', 'PlayGolf'))
-        print(expected_temperature_info_gain)
+        expected_temperature_info_gain = entropy(self.df, 'PlayGolf')-(-4/14*(1/2*log2(1/2)+1/2*log2(1/2)) - 4/14*(3/4*log2(3/4)+1/4*log2(1/4)) - 6/14*(4/6*log2(4/6)+2/6*log2(2/6)))
+        self.assertEqual(info_gain(self.df, 'Temperature', 'PlayGolf'), expected_temperature_info_gain)
+    
+    def test_info_gain_ratio(self):
+        expected_temperature_info_gain_ratio = info_gain(self.df, 'Temperature', 'PlayGolf')/-(4/14*log2(4/14)+4/14*log2(4/14)+6/14*log2(6/14))
+        self.assertEqual(info_gain_ratio(self.df, 'Temperature', 'PlayGolf'), expected_temperature_info_gain_ratio)
 
 if __name__=='__main__':
     unittest.main()

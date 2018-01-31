@@ -57,11 +57,8 @@ def info_gain(dataset, feature, target):
     for fi in feature_values:
         sub_feature_set = dataset.loc[dataset[feature]==fi]
         feature_probability = sub_feature_set[feature].count()/dataset[feature].count()
-
-        # sub_target_set = [ sub_feature_set.loc[sub_feature_set[target]==x] for x in target_values]
-        # temp_entropy = 0
-        # for d in sub_target_set:
-        #     temp_entropy+=entropy(d, target)
-
         conditional_entropy+=feature_probability*(entropy(sub_feature_set, target))
     return HD-conditional_entropy
+
+def info_gain_ratio(dataset, feature, target):
+    return info_gain(dataset,feature, target)/entropy(dataset, feature)
